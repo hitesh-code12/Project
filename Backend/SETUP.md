@@ -300,3 +300,89 @@ For issues and questions:
 ---
 
 **🏸 Happy Coding!** 
+
+---
+
+## 🚀 **Deploying Only the Backend Folder to Railway (Monorepo)**
+
+### 1. **Push Your Repo to GitHub**
+- Make sure your project is on GitHub (with both `Backend/` and `mydrivecloud/` folders).
+
+### 2. **Create a New Railway Project**
+- Go to [https://railway.app/](https://railway.app/) and log in.
+- Click **“New Project”** → **“Deploy from GitHub repo”**.
+- Select your repo.
+
+### 3. **Configure the Service to Use the Backend Folder**
+- After import, Railway will try to auto-detect your project.
+- **If it asks for a root directory, select `Backend/`.**
+- If not, go to the **Service settings** (the gear icon), and set the **Root Directory** to `Backend`.
+
+### 4. **Set Build and Start Commands**
+- **Build Command:**  
+  ```
+  npm install
+  ```
+- **Start Command:**  
+  ```
+  npm start
+  ```
+- **Root Directory:**  
+  ```
+  Backend
+  ```
+
+### 5. **Set Environment Variables**
+- In Railway, go to the **Variables** tab for your service.
+- Add all the variables from your `Backend/.env` file (except comments).
+- Example:
+  ```
+  PORT=8000
+  MONGODB_URI=your-mongodb-atlas-uri
+  JWT_SECRET=your-secret
+  CLOUDINARY_CLOUD_NAME=...
+  CLOUDINARY_API_KEY=...
+  CLOUDINARY_API_SECRET=...
+  ```
+- **Tip:** Use MongoDB Atlas for your database (free tier).
+
+### 6. **Deploy**
+- Click **“Deploy”** or wait for Railway to auto-deploy.
+- After a few minutes, you’ll get a public URL like `https://your-app.up.railway.app`.
+
+### 7. **Update Your Frontend API URL**
+- In your frontend code (`mydrivecloud/src/contexts/AuthContext.js`), change:
+  ```js
+  const API_BASE_URL = 'https://your-app.up.railway.app/api';
+  ```
+- Commit and push this change to GitHub.
+
+### 8. **(Optional) Deploy Frontend Separately**
+- You can deploy your React frontend to GitHub Pages, Vercel, or Netlify.
+- Make sure it points to your Railway backend URL.
+
+---
+
+## ⚠️ **Common Issues & Tips**
+
+- **Wrong Root Directory:**  
+  If you see errors about missing `package.json`, double-check the root directory is set to `Backend`.
+
+- **Environment Variables:**  
+  All secrets must be set in Railway’s Variables tab.
+
+- **CORS:**  
+  Your backend should allow requests from your frontend’s domain.
+
+---
+
+## 📝 **Summary**
+
+- Set Railway’s root directory to `Backend`
+- Set build/start commands and environment variables
+- Deploy and get your backend URL
+- Update frontend to use the new backend URL
+
+---
+
+**If you want, I can give you exact Railway UI steps with screenshots, or help you with MongoDB Atlas setup. Just let me know!** 

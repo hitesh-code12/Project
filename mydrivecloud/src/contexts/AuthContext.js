@@ -3,7 +3,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 const AuthContext = createContext();
 
 // Backend API configuration
-const API_BASE_URL = 'http://localhost:5001/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://badminton-booking-production.up.railway.app/api'  // Replace with your actual Railway URL
+  : 'http://localhost:5001/api';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
