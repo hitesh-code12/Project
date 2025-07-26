@@ -30,7 +30,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "homepage": "https://yourusername.github.io/your-repo-name",
+  "homepage": "https://hitesh-code12.github.io/Project",
   "eslintConfig": {
     "extends": [
       "react-app",
