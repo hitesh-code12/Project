@@ -79,15 +79,21 @@ app.use(errorHandler);
 // Database connection
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(
-      process.env.NODE_ENV === 'production' 
-        ? process.env.MONGODB_URI_PROD 
-        : process.env.MONGODB_URI,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    );
+    // Debug: Log environment variables (remove in production)
+    console.log('Environment Variables Debug:');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    console.log('MONGODB_URI_PROD exists:', !!process.env.MONGODB_URI_PROD);
+    
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGODB_URI_PROD;
+    if (!mongoUri) {
+      throw new Error('MongoDB URI not found in environment variables');
+    }
+    
+    const conn = await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('Database connection error:', error);
