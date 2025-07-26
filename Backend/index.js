@@ -28,7 +28,7 @@ app.use(compression());
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.com'] 
+    ? ['https://hitesh-code12.github.io'] 
     : ['http://localhost:3000'],
   credentials: true
 }));
