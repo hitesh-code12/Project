@@ -24,8 +24,10 @@ const PlayersManagement = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await apiCall('/users/players');
-      setPlayers(response.players || []);
+      const response = await apiCall('/users');
+      // Filter to only show players (exclude admins)
+      const playersOnly = response.data.filter(user => user.role === 'player');
+      setPlayers(playersOnly);
     } catch (error) {
       console.error('Error fetching players:', error);
       toast.error('Failed to fetch players');
