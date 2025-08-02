@@ -133,6 +133,26 @@ app.get('/api/network-test', (req, res) => {
   });
 });
 
+// Simple ping endpoint for mobile networks
+app.get('/api/ping', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'pong',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Alternative health check for mobile networks
+app.get('/api/mobile-health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Mobile network health check',
+    timestamp: new Date().toISOString(),
+    server: 'railway',
+    environment: process.env.NODE_ENV
+  });
+});
+
 // Serve static files from uploads directory
 app.use('/uploads', express.static('uploads'));
 
