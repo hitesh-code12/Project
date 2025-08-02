@@ -121,6 +121,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (updatedUserData) => {
+    setCurrentUser(updatedUserData);
+    localStorage.setItem('user', JSON.stringify(updatedUserData));
+  };
+
   useEffect(() => {
     fetchCurrentUser();
   }, []);
@@ -133,6 +138,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     loading,
     apiCall, // Expose apiCall for other components to use
+    updateUser, // Expose updateUser for profile updates
   };
 
   return (

@@ -49,9 +49,6 @@ const Navigation = () => {
   ];
 
   const playerMenuItems = [
-    { name: 'My Bookings', icon: Calendar, path: '/player/bookings' },
-    { name: 'My Payments', icon: Upload, path: '/player/payments' },
-    { name: 'Availability', icon: CheckCircle, path: '/player/availability' },
     { name: 'Profile', icon: User, path: '/player/profile' },
   ];
 
@@ -198,39 +195,59 @@ const Navigation = () => {
                 </Link>
               ))}
               
-              {/* Admin Mobile Menu Items */}
-              {userRole === 'admin' && (
-                <>
-                  <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Basic Management
-                  </div>
-                  {adminManagementItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      className="flex items-center space-x-3 px-8 py-3 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <item.icon size={18} />
-                      <span>{item.name}</span>
-                    </Link>
-                  ))}
-                  <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    Advanced Features
-                  </div>
-                  {adminAdvancedItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      className="flex items-center space-x-3 px-8 py-3 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <item.icon size={18} />
-                      <span>{item.name}</span>
-                    </Link>
-                  ))}
-                </>
-              )}
+                             {/* Admin Mobile Menu Items */}
+               {userRole === 'admin' && (
+                 <>
+                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                     Basic Management
+                   </div>
+                   {adminManagementItems.map((item) => (
+                     <Link
+                       key={item.name}
+                       to={item.path}
+                       className="flex items-center space-x-3 px-8 py-3 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                       onClick={() => setIsMenuOpen(false)}
+                     >
+                       <item.icon size={18} />
+                       <span>{item.name}</span>
+                     </Link>
+                   ))}
+                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                     Advanced Features
+                   </div>
+                   {adminAdvancedItems.map((item) => (
+                     <Link
+                       key={item.name}
+                       to={item.path}
+                       className="flex items-center space-x-3 px-8 py-3 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                       onClick={() => setIsMenuOpen(false)}
+                     >
+                       <item.icon size={18} />
+                       <span>{item.name}</span>
+                     </Link>
+                   ))}
+                 </>
+               )}
+               
+               {/* Player Mobile Menu Items */}
+               {userRole === 'player' && (
+                 <>
+                   <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                     Player Menu
+                   </div>
+                   {playerMenuItems.map((item) => (
+                     <Link
+                       key={item.name}
+                       to={item.path}
+                       className="flex items-center space-x-3 px-8 py-3 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                       onClick={() => setIsMenuOpen(false)}
+                     >
+                       <item.icon size={18} />
+                       <span>{item.name}</span>
+                     </Link>
+                   ))}
+                 </>
+               )}
               
               <Link
                 to="/leaderboard"

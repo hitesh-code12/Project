@@ -7,11 +7,10 @@ import {
   MapPin,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  User
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import MyBookings from './MyBookings';
-import MyPayments from './MyPayments';
 import PlayerProfile from './PlayerProfile';
 
 const PlayerDashboard = () => {
@@ -254,11 +253,11 @@ const PlayerDashboard = () => {
               <div className="card hover:shadow-md transition-shadow cursor-pointer">
                 <div className="flex items-center">
                   <div className="p-3 rounded-lg bg-purple-500">
-                    <Clock className="h-6 w-6 text-white" />
+                    <User className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">Upcoming Sessions</h3>
-                    <p className="text-sm text-gray-600">Check your next games</p>
+                    <h3 className="text-lg font-medium text-gray-900">My Profile</h3>
+                    <p className="text-sm text-gray-600">Update your profile and settings</p>
                   </div>
                 </div>
               </div>
@@ -267,8 +266,6 @@ const PlayerDashboard = () => {
         </div>
       } />
       
-      <Route path="/bookings" element={<MyBookings />} />
-      <Route path="/payments" element={<MyPayments />} />
       <Route path="/profile" element={<PlayerProfile />} />
     </Routes>
   );
