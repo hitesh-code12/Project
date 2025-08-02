@@ -85,8 +85,14 @@ const PlayersManagement = () => {
   };
 
   const handleDelete = async (playerId) => {
+    if (!playerId) {
+      toast.error('Invalid player ID');
+      return;
+    }
+
     if (window.confirm('Are you sure you want to delete this player?')) {
       try {
+        console.log('Deleting player with ID:', playerId);
         await apiCall(`/users/${playerId}`, {
           method: 'DELETE',
         });
@@ -94,7 +100,7 @@ const PlayersManagement = () => {
         fetchPlayers();
       } catch (error) {
         console.error('Error deleting player:', error);
-        toast.error('Failed to delete player');
+        toast.error(error.message || 'Failed to delete player');
       }
     }
   };
@@ -262,7 +268,7 @@ const PlayersManagement = () => {
                           <Edit size={16} />
                         </button>
                         <button
-                          onClick={() => handleDelete(player.id)}
+                          onClick={() => handleDelete(player._id || player.id)}
                           className="text-red-600 hover:text-red-900"
                         >
                           <Trash2 size={16} />
