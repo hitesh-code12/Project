@@ -46,10 +46,15 @@ app.use(cors({
       'https://hitesh-code12.github.io/Project',
       'https://hitesh-code12.github.io/Project/',
       'http://localhost:3000',
-      'http://localhost:3000/'
+      'http://localhost:3000/',
+      // Allow all origins for testing (remove in production)
+      '*'
     ];
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // For testing, allow all origins
+    if (process.env.NODE_ENV === 'development' || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
@@ -103,7 +108,28 @@ app.get('/api/test', (req, res) => {
     success: true,
     message: 'API is accessible',
     timestamp: new Date().toISOString(),
-    origin: req.headers.origin
+    origin: req.headers.origin,
+    headers: {
+      'user-agent': req.headers['user-agent'],
+      'accept': req.headers['accept'],
+      'content-type': req.headers['content-type']
+    },
+    environment: process.env.NODE_ENV
+  });
+});
+
+// Network diagnostics endpoint
+app.get('/api/network-test', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Network test successful',
+    timestamp: new Date().toISOString(),
+    clientIP: req.ip,
+    forwardedFor: req.headers['x-forwarded-for'],
+    userAgent: req.headers['user-agent'],
+    origin: req.headers.origin,
+    referer: req.headers.referer,
+    host: req.headers.host
   });
 });
 
