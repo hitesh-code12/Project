@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ConnectionTest from '../common/ConnectionTest';
 
 const Login = () => {
   const { login } = useAuth();
@@ -139,6 +140,11 @@ const Login = () => {
             </button>
           </div>
         </form>
+        
+        {/* Connection Test - Remove this after debugging */}
+        <div className="mt-8">
+          <ConnectionTest />
+        </div>
       </div>
     </div>
   );
