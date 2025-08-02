@@ -1,95 +1,88 @@
-#!/usr/bin/env node
+// Railway Setup Guide for Mobile Network Compatibility
+// This file contains all the environment variables you need to set in Railway
 
-// Railway Environment Setup Verification Script
-console.log('🚂 Railway Environment Setup Verification');
-console.log('==========================================');
-
-// Check required environment variables
-const requiredVars = {
-  'MONGODB_URI': 'MongoDB connection string',
-  'JWT_SECRET': 'JWT secret key for authentication',
-  'NODE_ENV': 'Node environment (should be production)'
+const requiredEnvVars = {
+  // Database
+  MONGODB_URI: "mongodb+srv://hitesh012:Aruna123@cluster0.hlovctz.mongodb.net/badminton-booking?retryWrites=true&w=majority&appName=Cluster0",
+  
+  // Authentication
+  JWT_SECRET: "badminton-booking-secret-key-2024-production",
+  JWT_EXPIRE: "7d",
+  
+  // Server Configuration
+  NODE_ENV: "production",
+  PORT: "5001", // Railway will override this automatically
+  
+  // Rate Limiting
+  RATE_LIMIT_WINDOW_MS: "900000", // 15 minutes
+  RATE_LIMIT_MAX_REQUESTS: "100",
+  
+  // File Upload
+  MAX_FILE_SIZE: "5242880", // 5MB
+  ALLOWED_FILE_TYPES: "image/jpeg,image/png,image/jpg,application/pdf",
+  
+  // Railway-specific (optional but recommended)
+  RAILWAY_STATIC_URL: "https://project-production-3188.up.railway.app",
+  RAILWAY_PUBLIC_DOMAIN: "project-production-3188.up.railway.app",
+  
+  // CORS and Network (for mobile compatibility)
+  ALLOWED_ORIGINS: "https://hitesh-code12.github.io,http://localhost:3000,*",
+  CORS_ENABLED: "true",
+  
+  // Health Check
+  HEALTH_CHECK_ENABLED: "true",
+  HEALTH_CHECK_PATH: "/health"
 };
 
-const optionalVars = {
-  'PORT': 'Server port (Railway sets this automatically)',
-  'RATE_LIMIT_WINDOW_MS': 'Rate limiting window',
-  'RATE_LIMIT_MAX_REQUESTS': 'Rate limiting max requests',
-  'MAX_FILE_SIZE': 'Maximum file upload size',
-  'ALLOWED_FILE_TYPES': 'Allowed file types for uploads'
+const optionalEnvVars = {
+  // Email (if you want to enable email notifications)
+  EMAIL_HOST: "smtp.gmail.com",
+  EMAIL_PORT: "587",
+  EMAIL_USER: "your-email@gmail.com",
+  EMAIL_PASS: "your-app-password",
+  
+  // Cloudinary (for file uploads)
+  CLOUDINARY_CLOUD_NAME: "your-cloud-name",
+  CLOUDINARY_API_KEY: "your-api-key",
+  CLOUDINARY_API_SECRET: "your-api-secret"
 };
 
-console.log('\n🔍 Checking Required Environment Variables:');
-console.log('===========================================');
+console.log("🚂 Railway Environment Variables Setup Guide");
+console.log("=============================================");
+console.log("");
+console.log("📋 REQUIRED VARIABLES (Set these in Railway Dashboard):");
+console.log("");
 
-let allRequiredSet = true;
-Object.entries(requiredVars).forEach(([varName, description]) => {
-  const value = process.env[varName];
-  if (value) {
-    // Mask sensitive values
-    const displayValue = varName.includes('MONGODB') || varName.includes('JWT') 
-      ? value.substring(0, 20) + '...' 
-      : value;
-    console.log(`✅ ${varName}: ${displayValue} (${description})`);
-  } else {
-    console.log(`❌ ${varName}: NOT SET (${description})`);
-    allRequiredSet = false;
-  }
+Object.entries(requiredEnvVars).forEach(([key, value]) => {
+  console.log(`${key}=${value}`);
 });
 
-console.log('\n🔍 Checking Optional Environment Variables:');
-console.log('===========================================');
+console.log("");
+console.log("📋 OPTIONAL VARIABLES (Set if needed):");
+console.log("");
 
-Object.entries(optionalVars).forEach(([varName, description]) => {
-  const value = process.env[varName];
-  if (value) {
-    console.log(`✅ ${varName}: ${value} (${description})`);
-  } else {
-    console.log(`⚠️  ${varName}: NOT SET (${description}) - will use defaults`);
-  }
+Object.entries(optionalEnvVars).forEach(([key, value]) => {
+  console.log(`${key}=${value}`);
 });
 
-console.log('\n🔍 Railway-Specific Environment Variables:');
-console.log('===========================================');
+console.log("");
+console.log("🔧 SETUP INSTRUCTIONS:");
+console.log("1. Go to Railway Dashboard");
+console.log("2. Select your project");
+console.log("3. Go to 'Variables' tab");
+console.log("4. Add each variable above");
+console.log("5. Deploy the project");
+console.log("");
+console.log("🌐 MOBILE NETWORK TROUBLESHOOTING:");
+console.log("- If mobile networks can't connect, try these additional variables:");
+console.log("  ALLOWED_ORIGINS=*");
+console.log("  CORS_ENABLED=true");
+console.log("  NODE_ENV=development (temporarily for testing)");
+console.log("");
+console.log("🔍 VERIFICATION:");
+console.log("After deployment, test these endpoints:");
+console.log("- https://project-production-3188.up.railway.app/health");
+console.log("- https://project-production-3188.up.railway.app/api/ping");
+console.log("- https://project-production-3188.up.railway.app/api/mobile-health");
 
-const railwayVars = Object.keys(process.env).filter(key => key.startsWith('RAILWAY_'));
-railwayVars.forEach(varName => {
-  console.log(`🚂 ${varName}: ${process.env[varName]}`);
-});
-
-// Summary
-console.log('\n📊 Summary:');
-console.log('===========');
-
-if (allRequiredSet) {
-  console.log('✅ All required environment variables are set!');
-  console.log('🚀 Your Railway deployment should work correctly.');
-} else {
-  console.log('❌ Some required environment variables are missing!');
-  console.log('🔧 Please add the missing variables in your Railway dashboard.');
-  console.log('📖 See RAILWAY_ENV_SETUP.md for detailed instructions.');
-}
-
-// MongoDB URI validation
-const mongoUri = process.env.MONGODB_URI;
-if (mongoUri) {
-  if (mongoUri.includes('mongodb+srv://') && mongoUri.includes('@cluster0.hlovctz.mongodb.net/')) {
-    console.log('✅ MongoDB URI format looks correct');
-  } else {
-    console.log('⚠️  MongoDB URI format might be incorrect - check the connection string');
-  }
-}
-
-console.log('\n🔗 Next Steps:');
-console.log('==============');
-if (allRequiredSet) {
-  console.log('1. ✅ Environment variables are set correctly');
-  console.log('2. 🚀 Railway should automatically redeploy');
-  console.log('3. 🔍 Check Railway logs for deployment status');
-  console.log('4. 🌐 Test your API: https://project-production-3188.up.railway.app/health');
-} else {
-  console.log('1. 🔧 Add missing environment variables in Railway dashboard');
-  console.log('2. 📖 Follow the setup guide in RAILWAY_ENV_SETUP.md');
-  console.log('3. 🔄 Wait for Railway to redeploy');
-  console.log('4. 🔍 Check logs for any remaining issues');
-} 
+module.exports = { requiredEnvVars, optionalEnvVars }; 

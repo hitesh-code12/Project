@@ -91,14 +91,27 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('combined'));
 }
 
-// Health check endpoint
+// Health check endpoint (Railway requires this)
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
     message: 'Badminton Booking API is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
-    mongodbConfigured: !!(process.env.MONGODB_URI || process.env.MONGODB_URI_PROD || process.env.MONGODB_URL || process.env.DATABASE_URL)
+    mongodbConfigured: !!(process.env.MONGODB_URI || process.env.MONGODB_URI_PROD || process.env.MONGODB_URL || process.env.DATABASE_URL),
+    port: process.env.PORT,
+    railwayUrl: process.env.RAILWAY_STATIC_URL,
+    publicDomain: process.env.RAILWAY_PUBLIC_DOMAIN
+  });
+});
+
+// Root endpoint for Railway
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Badminton Booking API',
+    version: '1.0.0',
+    status: 'running',
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -214,11 +227,15 @@ const startServer = async () => {
     console.log('🚀 Starting server...');
     console.log(`📊 Environment: ${process.env.NODE_ENV}`);
     console.log(`🔌 Port: ${PORT}`);
+    console.log(`🌐 Railway URL: ${process.env.RAILWAY_STATIC_URL || 'Not set'}`);
+    console.log(`🔗 Public URL: ${process.env.RAILWAY_PUBLIC_DOMAIN || 'Not set'}`);
     
     await connectDB();
     
-    const server = app.listen(PORT, () => {
+    // Listen on all interfaces for Railway
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ Server running on port ${PORT}`);
+      console.log(`🌍 Listening on all interfaces (0.0.0.0:${PORT})`);
       console.log(`🏸 Badminton Booking API ready!`);
     });
     
