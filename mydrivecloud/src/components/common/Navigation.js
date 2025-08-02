@@ -11,7 +11,8 @@ import {
   Menu, 
   X,
   User,
-  Settings
+  Trophy,
+  CheckCircle
 } from 'lucide-react';
 
 const Navigation = () => {
@@ -34,11 +35,14 @@ const Navigation = () => {
     { name: 'Venues', icon: MapPin, path: '/admin/venues' },
     { name: 'Bookings', icon: Calendar, path: '/admin/bookings' },
     { name: 'Payments', icon: Upload, path: '/admin/payments' },
+    { name: 'Availability', icon: CheckCircle, path: '/admin/availability' },
+    { name: 'Leagues', icon: Trophy, path: '/admin/leagues' },
   ];
 
   const playerMenuItems = [
     { name: 'My Bookings', icon: Calendar, path: '/player/bookings' },
     { name: 'My Payments', icon: Upload, path: '/player/payments' },
+    { name: 'Availability', icon: CheckCircle, path: '/player/availability' },
     { name: 'Profile', icon: User, path: '/player/profile' },
   ];
 
@@ -70,6 +74,13 @@ const Navigation = () => {
                 <span>{item.name}</span>
               </Link>
             ))}
+            <Link
+              to="/leaderboard"
+              className="flex items-center space-x-2 text-gray-600 hover:text-primary-600 transition-colors"
+            >
+              <Trophy size={20} />
+              <span>🏅 Leaderboard</span>
+            </Link>
           </div>
 
           {/* User Menu */}
@@ -114,6 +125,14 @@ const Navigation = () => {
                   <span>{item.name}</span>
                 </Link>
               ))}
+              <Link
+                to="/leaderboard"
+                className="flex items-center space-x-3 px-4 py-2 text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-md"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Trophy size={20} />
+                <span>🏅 Leaderboard</span>
+              </Link>
               <div className="border-t border-gray-200 pt-2 mt-2">
                 <div className="px-4 py-2 text-sm text-gray-500">
                   {currentUser?.displayName || currentUser?.email}
