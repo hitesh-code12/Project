@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please provide a valid phone number']
   },
-  avatar: {
+  profileImage: {
     type: String,
     default: null
   },

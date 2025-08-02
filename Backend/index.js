@@ -16,6 +16,7 @@ const paymentRoutes = require('./routes/payments');
 const adminRoutes = require('./routes/admin');
 const availabilityRoutes = require('./routes/availability');
 const leagueRoutes = require('./routes/leagues');
+const uploadRoutes = require('./routes/upload');
 
 // Import middleware
 const { errorHandler } = require('./middleware/errorHandler');
@@ -69,6 +70,9 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'));
+
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -78,6 +82,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/leagues', leagueRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Error handling middleware
 app.use(notFound);
