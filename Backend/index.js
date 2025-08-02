@@ -104,12 +104,26 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
+    console.log('🚀 Starting server...');
+    console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+    console.log(`🔌 Port: ${PORT}`);
+    
     await connectDB();
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+    
+    const server = app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
       console.log(`🏸 Badminton Booking API ready!`);
     });
+    
+    // Handle server errors
+    server.on('error', (error) => {
+      console.error('Server error:', error);
+      if (error.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use`);
+      }
+      process.exit(1);
+    });
+    
   } catch (error) {
     console.error('Server startup error:', error);
     process.exit(1);
