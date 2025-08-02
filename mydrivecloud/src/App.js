@@ -51,7 +51,7 @@ const AppContent = () => {
       <div className="min-h-screen bg-gray-50">
         {currentUser && <Navigation />}
         
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-4 lg:py-8">
           <Routes>
             <Route 
               path="/login" 

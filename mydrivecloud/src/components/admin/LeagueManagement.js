@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../contexts/AuthContext';
-import { Plus, Trophy, Users, Calendar, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Trophy, Users, Calendar, Trash2, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const LeagueManagement = () => {
@@ -136,16 +136,16 @@ const LeagueManagement = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 lg:space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">League Management</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">League Management</h1>
           <p className="text-gray-600">Create and manage badminton leagues</p>
         </div>
         <button
           onClick={() => setShowCreateForm(true)}
-          className="btn-primary flex items-center space-x-2"
+          className="btn-primary flex items-center space-x-2 w-full sm:w-auto justify-center"
         >
           <Plus size={20} />
           <span>Create League</span>
@@ -158,7 +158,7 @@ const LeagueManagement = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Create New League</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Info */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   League Name
@@ -204,7 +204,7 @@ const LeagueManagement = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Start Date
@@ -239,7 +239,7 @@ const LeagueManagement = () => {
               {Array.from({ length: watchTeamCount }, (_, i) => (
                 <div key={i} className="border rounded-lg p-4 space-y-4">
                   <h4 className="font-medium text-gray-900">Team {i + 1}</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Team Name
@@ -288,8 +288,8 @@ const LeagueManagement = () => {
               ))}
             </div>
 
-            <div className="flex space-x-3">
-              <button type="submit" className="btn-primary">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+              <button type="submit" className="btn-primary w-full sm:w-auto">
                 Create League
               </button>
               <button 
@@ -298,7 +298,7 @@ const LeagueManagement = () => {
                   setShowCreateForm(false);
                   reset();
                 }} 
-                className="btn-secondary"
+                className="btn-secondary w-full sm:w-auto"
               >
                 Cancel
               </button>
@@ -321,19 +321,19 @@ const LeagueManagement = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     League
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Teams
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Duration
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -341,19 +341,22 @@ const LeagueManagement = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {leagues.map((league) => (
                   <tr key={league.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">
                           {league.name}
                         </div>
                         {league.description && (
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 truncate max-w-xs">
                             {league.description}
                           </div>
                         )}
+                        <div className="lg:hidden text-xs text-gray-500 mt-1">
+                          {formatDate(league.startDate)} - {formatDate(league.endDate)}
+                        </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <Users className="h-4 w-4 text-gray-400 mr-2" />
                         <span className="text-sm text-gray-900">
@@ -361,7 +364,7 @@ const LeagueManagement = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 text-gray-400 mr-2" />
                         <span className="text-sm text-gray-900">
@@ -369,12 +372,12 @@ const LeagueManagement = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(getLeagueStatus(league))}`}>
                         {getLeagueStatus(league)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
                         <button
                           onClick={() => setSelectedLeague(league)}
