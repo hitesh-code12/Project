@@ -92,7 +92,8 @@ app.get('/health', (req, res) => {
     status: 'OK',
     message: 'Badminton Booking API is running',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
+    environment: process.env.NODE_ENV,
+    mongodbConfigured: !!(process.env.MONGODB_URI || process.env.MONGODB_URI_PROD || process.env.MONGODB_URL || process.env.DATABASE_URL)
   });
 });
 
@@ -127,22 +128,34 @@ app.use(errorHandler);
 // Database connection
 const connectDB = async () => {
   try {
-    // Debug: Log environment variables (remove in production)
-    console.log('Environment Variables Debug:');
+    // Debug: Log environment variables
+    console.log('🔍 Environment Variables Debug:');
     console.log('NODE_ENV:', process.env.NODE_ENV);
     console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
     console.log('MONGODB_URI_PROD exists:', !!process.env.MONGODB_URI_PROD);
+    console.log('All env vars:', Object.keys(process.env).filter(key => key.includes('MONGODB')));
     
-    // In Railway, we only have MONGODB_URI set, so use that
-    const mongoUri = process.env.MONGODB_URI;
+    // Try different environment variable names
+    let mongoUri = process.env.MONGODB_URI || 
+                   process.env.MONGODB_URI_PROD || 
+                   process.env.MONGODB_URL ||
+                   process.env.DATABASE_URL;
+    
     if (!mongoUri) {
-      throw new Error('MongoDB URI not found in environment variables');
+      console.error('❌ No MongoDB URI found in environment variables');
+      console.error('Available environment variables:', Object.keys(process.env));
+      throw new Error('MongoDB URI not found in environment variables. Please check Railway environment variables.');
     }
     
-    const conn = await mongoose.connect(mongoUri);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log('✅ MongoDB URI found, attempting connection...');
+    const conn = await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('Database connection error:', error);
+    console.error('❌ Database connection error:', error);
+    console.error('Please check your Railway environment variables and MongoDB connection string.');
     process.exit(1);
   }
 };
