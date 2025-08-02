@@ -27,6 +27,9 @@ const { scheduleWeeklyNotification } = require('./utils/weeklyNotification');
 
 const app = express();
 
+// Trust proxy for Railway deployment (fixes rate-limit X-Forwarded-For error)
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 app.use(compression());
@@ -45,7 +48,11 @@ const limiter = rateLimit({
   max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
   message: {
     error: 'Too many requests from this IP, please try again later.'
-  }
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  // Trust Railway's proxy
+  trustProxy: true
 });
 app.use('/api/', limiter);
 
