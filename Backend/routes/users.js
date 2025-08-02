@@ -133,6 +133,14 @@ router.put('/:id', async (req, res) => {
 // @access  Private (Admin only)
 router.delete('/:id', authorize('admin'), async (req, res) => {
   try {
+    // Validate user ID
+    if (!req.params.id || req.params.id === 'undefined') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID'
+      });
+    }
+
     const user = await User.findById(req.params.id);
     
     if (!user) {
@@ -142,7 +150,23 @@ router.delete('/:id', authorize('admin'), async (req, res) => {
       });
     }
 
-    await user.remove();
+    // Prevent admin from deleting themselves
+    if (user._id.toString() === req.user.id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete your own account'
+      });
+    }
+
+    // Prevent deleting the main admin
+    if (user.email === 'hiteshbhonkar@gmail.com') {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot delete the main administrator'
+      });
+    }
+
+    await user.deleteOne();
 
     res.json({
       success: true,
@@ -150,9 +174,18 @@ router.delete('/:id', authorize('admin'), async (req, res) => {
     });
   } catch (error) {
     console.error('Delete user error:', error);
+    
+    // Handle specific MongoDB errors
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID format'
+      });
+    }
+    
     res.status(500).json({
       success: false,
-      message: 'Server error'
+      message: 'Server error during user deletion'
     });
   }
 });
