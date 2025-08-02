@@ -6,11 +6,13 @@ const ConnectionTest = () => {
   const [testResult, setTestResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [networkInfo, setNetworkInfo] = useState(null);
+  const [detailedTests, setDetailedTests] = useState([]);
 
   const testConnection = async () => {
     setLoading(true);
     setTestResult(null);
     setNetworkInfo(null);
+    setDetailedTests([]);
     
     try {
       // Test basic connectivity first
@@ -142,6 +144,68 @@ const ConnectionTest = () => {
     }
   };
 
+  const runDetailedNetworkTests = async () => {
+    setLoading(true);
+    setDetailedTests([]);
+    
+    const tests = [
+      {
+        name: 'DNS Resolution Test',
+        url: 'https://project-production-3188.up.railway.app',
+        description: 'Test if Railway domain resolves'
+      },
+      {
+        name: 'HTTPS Connection Test',
+        url: 'https://project-production-3188.up.railway.app/health',
+        description: 'Test HTTPS connection to Railway'
+      },
+      {
+        name: 'API Endpoint Test',
+        url: 'https://project-production-3188.up.railway.app/api/test',
+        description: 'Test API endpoint accessibility'
+      },
+      {
+        name: 'Alternative Railway URL',
+        url: 'https://railway.app',
+        description: 'Test if Railway main site is accessible'
+      }
+    ];
+
+    const results = [];
+
+    for (const test of tests) {
+      try {
+        const startTime = Date.now();
+        const response = await fetch(test.url, {
+          method: 'GET',
+          mode: 'cors'
+        });
+        const endTime = Date.now();
+        
+        results.push({
+          name: test.name,
+          description: test.description,
+          success: response.ok,
+          status: response.status,
+          responseTime: endTime - startTime,
+          error: null
+        });
+      } catch (error) {
+        results.push({
+          name: test.name,
+          description: test.description,
+          success: false,
+          status: null,
+          responseTime: null,
+          error: error.message
+        });
+      }
+    }
+
+    setDetailedTests(results);
+    setLoading(false);
+  };
+
   return (
     <div className="card p-6">
       <h3 className="text-lg font-semibold mb-4">API Connection Diagnostics</h3>
@@ -177,6 +241,14 @@ const ConnectionTest = () => {
           className="btn-secondary w-full"
         >
           {loading ? 'Testing...' : 'Test Network Diagnostics'}
+        </button>
+
+        <button
+          onClick={runDetailedNetworkTests}
+          disabled={loading}
+          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 w-full"
+        >
+          {loading ? 'Running Tests...' : 'Run Detailed Network Tests'}
         </button>
       </div>
 
@@ -221,6 +293,45 @@ const ConnectionTest = () => {
         </div>
       )}
 
+      {detailedTests.length > 0 && (
+        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h4 className="font-medium text-blue-800 mb-2">Detailed Network Test Results</h4>
+          <div className="space-y-2">
+            {detailedTests.map((test, index) => (
+              <div key={index} className={`p-2 rounded ${
+                test.success ? 'bg-green-100' : 'bg-red-100'
+              }`}>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className={`font-medium ${
+                      test.success ? 'text-green-800' : 'text-red-800'
+                    }`}>
+                      {test.name}
+                    </p>
+                    <p className="text-xs text-gray-600">{test.description}</p>
+                  </div>
+                  <span className={`text-xs px-2 py-1 rounded ${
+                    test.success ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'
+                  }`}>
+                    {test.success ? 'PASS' : 'FAIL'}
+                  </span>
+                </div>
+                {test.responseTime && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    Response Time: {test.responseTime}ms
+                  </p>
+                )}
+                {test.error && (
+                  <p className="text-xs text-red-600 mt-1">
+                    Error: {test.error}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {networkInfo && (
         <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <h4 className="font-medium text-blue-800 mb-2">Network Information</h4>
@@ -231,13 +342,14 @@ const ConnectionTest = () => {
       )}
 
       <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <h4 className="font-medium text-yellow-800 mb-2">Troubleshooting Tips</h4>
+        <h4 className="font-medium text-yellow-800 mb-2">Mobile Network Troubleshooting</h4>
         <ul className="text-sm text-yellow-700 space-y-1">
-          <li>• If "Direct Fetch" works but "API Connection" doesn't, it's an authentication issue</li>
-          <li>• If both fail, it's a network connectivity issue</li>
-          <li>• Try switching between WiFi and mobile data</li>
-          <li>• Check if your network blocks Railway domains</li>
-          <li>• Try using a VPN or different network</li>
+          <li>• <strong>DNS Issues:</strong> Try switching to mobile data or different WiFi</li>
+          <li>• <strong>ISP Blocking:</strong> Some ISPs block Railway domains</li>
+          <li>• <strong>Corporate Firewall:</strong> Work networks often block external APIs</li>
+          <li>• <strong>Mobile Carrier:</strong> Some carriers restrict certain domains</li>
+          <li>• <strong>VPN Solution:</strong> Try using a VPN to bypass restrictions</li>
+          <li>• <strong>Alternative DNS:</strong> Try 8.8.8.8 or 1.1.1.1</li>
         </ul>
       </div>
     </div>
