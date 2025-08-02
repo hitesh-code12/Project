@@ -25,9 +25,6 @@ router.get('/dashboard', async (req, res) => {
     // Get booking stats
     const bookingStats = await Booking.getBookingStats();
     
-    // Get payment stats
-    const paymentStats = await Payment.getPaymentStats();
-
     // Get recent bookings
     const recentBookings = await Booking.find()
       .populate('venue', 'name')
@@ -84,7 +81,6 @@ router.get('/dashboard', async (req, res) => {
         userStats,
         venueStats,
         bookingStats,
-        paymentStats,
         totalRevenue: totalRevenue[0]?.total || 0,
         monthlyRevenue,
         recentBookings,
@@ -156,6 +152,12 @@ router.get('/overview', async (req, res) => {
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]);
 
+    // Calculate total revenue
+    const totalRevenue = await Payment.aggregate([
+      { $match: { status: 'approved' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]);
+
     res.json({
       success: true,
       data: {
@@ -165,7 +167,8 @@ router.get('/overview', async (req, res) => {
           totalAdmins,
           totalVenues,
           totalBookings,
-          totalPayments
+          totalPayments,
+          totalRevenue: totalRevenue[0]?.total || 0
         },
         today: {
           bookings: todayBookings,
