@@ -5,7 +5,7 @@ const User = require('../models/User');
 
 const router = express.Router();
 
-// @desc    Register user
+// @desc    Register user (Players only)
 // @route   POST /api/auth/register
 // @access  Public
 router.post('/register', [
@@ -19,11 +19,7 @@ router.post('/register', [
     .withMessage('Please provide a valid email'),
   body('password')
     .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters'),
-  body('role')
-    .optional()
-    .isIn(['admin', 'player'])
-    .withMessage('Role must be either admin or player')
+    .withMessage('Password must be at least 6 characters')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -35,7 +31,7 @@ router.post('/register', [
       });
     }
 
-    const { name, email, password, role = 'player' } = req.body;
+    const { name, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -46,7 +42,10 @@ router.post('/register', [
       });
     }
 
-    // Create user
+    // Force all registrations to be players only
+    const role = 'player';
+
+    // Create user (always as player)
     const user = await User.create({
       name,
       email,
@@ -335,6 +334,78 @@ router.post('/forgot-password', [
     res.status(500).json({
       success: false,
       message: 'Server error during password reset'
+    });
+  }
+});
+
+// @desc    Create admin (Special endpoint for Hitesh only)
+// @route   POST /api/auth/create-admin
+// @access  Private (Admin only)
+router.post('/create-admin', protect, [
+  body('name')
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be between 2 and 50 characters'),
+  body('email')
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Please provide a valid email'),
+  body('password')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
+    }
+
+    // Only allow Hitesh to create admins
+    if (req.user.email !== 'hiteshbhonkar@gmail.com') {
+      return res.status(403).json({
+        success: false,
+        message: 'Only the main admin can create additional admins'
+      });
+    }
+
+    const { name, email, password } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User already exists with this email'
+      });
+    }
+
+    // Create admin user
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: 'admin'
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Admin created successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Create admin error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during admin creation'
     });
   }
 });
