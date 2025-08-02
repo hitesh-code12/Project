@@ -5,7 +5,6 @@ import {
   MapPin, 
   Calendar, 
   DollarSign, 
-  TrendingUp,
   Plus,
   Settings
 } from 'lucide-react';
@@ -32,24 +31,59 @@ const AdminDashboard = () => {
   const fetchDashboardStats = async () => {
     try {
       // Fetch dashboard stats from backend
-      const response = await apiCall('/admin/dashboard');
-      setStats({
-        totalPlayers: response.stats.totalUsers || 0,
-        totalVenues: response.stats.totalVenues || 0,
-        totalBookings: response.stats.totalBookings || 0,
-        totalRevenue: response.stats.totalRevenue || 0,
-      });
+      const response = await apiCall('/admin/overview');
+      
+      if (response.success && response.data) {
+        setStats({
+          totalPlayers: response.data.overview.totalPlayers || 0,
+          totalVenues: response.data.overview.totalVenues || 0,
+          totalBookings: response.data.overview.totalBookings || 0,
+          totalRevenue: response.data.overview.totalRevenue || 0,
+        });
+      } else {
+        // Fallback: fetch individual counts
+        await fetchIndividualStats();
+      }
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
-      // Fallback to basic stats if API fails
+      // Fallback: fetch individual counts
+      await fetchIndividualStats();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchIndividualStats = async () => {
+    try {
+      // Fetch users (players only)
+      const usersResponse = await apiCall('/users');
+      const players = usersResponse.data.filter(user => user.role === 'player');
+      
+      // Fetch venues
+      const venuesResponse = await apiCall('/venues');
+      
+      // Fetch bookings
+      const bookingsResponse = await apiCall('/bookings');
+      
+      // Fetch payments for revenue
+      const paymentsResponse = await apiCall('/payments');
+      const approvedPayments = paymentsResponse.data.filter(payment => payment.status === 'approved');
+      const totalRevenue = approvedPayments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
+
+      setStats({
+        totalPlayers: players.length,
+        totalVenues: venuesResponse.data.length,
+        totalBookings: bookingsResponse.data.length,
+        totalRevenue: totalRevenue,
+      });
+    } catch (error) {
+      console.error('Error fetching individual stats:', error);
       setStats({
         totalPlayers: 0,
         totalVenues: 0,
         totalBookings: 0,
         totalRevenue: 0,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
