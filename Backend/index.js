@@ -36,10 +36,29 @@ app.use(compression());
 
 // CORS configuration
 app.use(cors({
-  origin: ['https://hitesh-code12.github.io', 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'https://hitesh-code12.github.io',
+      'https://hitesh-code12.github.io/',
+      'https://hitesh-code12.github.io/Project',
+      'https://hitesh-code12.github.io/Project/',
+      'http://localhost:3000',
+      'http://localhost:3000/'
+    ];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Origin', 'Accept']
 }));
 
 // Rate limiting
@@ -74,6 +93,16 @@ app.get('/health', (req, res) => {
     message: 'Badminton Booking API is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV
+  });
+});
+
+// Test endpoint for CORS debugging
+app.get('/api/test', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'API is accessible',
+    timestamp: new Date().toISOString(),
+    origin: req.headers.origin
   });
 });
 
