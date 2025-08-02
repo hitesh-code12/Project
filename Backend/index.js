@@ -14,10 +14,15 @@ const venueRoutes = require('./routes/venues');
 const bookingRoutes = require('./routes/bookings');
 const paymentRoutes = require('./routes/payments');
 const adminRoutes = require('./routes/admin');
+const availabilityRoutes = require('./routes/availability');
+const leagueRoutes = require('./routes/leagues');
 
 // Import middleware
 const { errorHandler } = require('./middleware/errorHandler');
 const { notFound } = require('./middleware/notFound');
+
+// Import utilities
+const { scheduleWeeklyNotification } = require('./utils/weeklyNotification');
 
 const app = express();
 
@@ -71,6 +76,8 @@ app.use('/api/venues', venueRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/availability', availabilityRoutes);
+app.use('/api/leagues', leagueRoutes);
 
 // Error handling middleware
 app.use(notFound);
@@ -123,6 +130,13 @@ const startServer = async () => {
       }
       process.exit(1);
     });
+    
+    // Schedule weekly availability notifications
+    if (process.env.NODE_ENV === 'production') {
+      scheduleWeeklyNotification();
+    } else {
+      console.log('🕐 Weekly notifications disabled in development mode');
+    }
     
   } catch (error) {
     console.error('Server startup error:', error);
