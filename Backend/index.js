@@ -85,7 +85,9 @@ const connectDB = async () => {
     console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
     console.log('MONGODB_URI_PROD exists:', !!process.env.MONGODB_URI_PROD);
     
-    const mongoUri = process.env.MONGODB_URI || process.env.MONGODB_URI_PROD;
+    const mongoUri = process.env.NODE_ENV === 'production' 
+      ? (process.env.MONGODB_URI_PROD || process.env.MONGODB_URI)
+      : (process.env.MONGODB_URI || process.env.MONGODB_URI_PROD);
     if (!mongoUri) {
       throw new Error('MongoDB URI not found in environment variables');
     }
