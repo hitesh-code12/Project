@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../../contexts/AuthContext';
-import { Mail, Lock, Eye, EyeOff, User, Shield } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Signup = () => {
@@ -24,8 +24,8 @@ const Signup = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      console.log('Attempting to signup with:', { email: data.email, name: data.name, role: data.role });
-      await signup(data.email, data.password, data.name, data.role);
+      console.log('Attempting to signup with:', { email: data.email, name: data.name, role: 'player' });
+      await signup(data.email, data.password, data.name, 'player');
       console.log('Signup successful!');
       toast.success('Account created successfully!');
       navigate('/');
@@ -116,30 +116,7 @@ const Signup = () => {
               )}
             </div>
 
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-                Role
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Shield className="h-5 w-5 text-gray-400" />
-                </div>
-                <select
-                  id="role"
-                  {...register('role', {
-                    required: 'Role is required',
-                  })}
-                  className={`input-field pl-10 ${errors.role ? 'border-red-500' : ''}`}
-                >
-                  <option value="">Select your role</option>
-                  <option value="player">Player</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              {errors.role && (
-                <p className="mt-1 text-sm text-red-600">{errors.role.message}</p>
-              )}
-            </div>
+
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
