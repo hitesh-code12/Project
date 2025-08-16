@@ -107,6 +107,77 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// @desc    Create venue from Google Places data
+// @route   POST /api/venues/google-places
+// @access  Admin only
+router.post('/google-places', authorize('admin'), [
+  body('name').notEmpty().withMessage('Name is required'),
+  body('googlePlaceId').notEmpty().withMessage('Google Place ID is required'),
+  body('address').isObject().withMessage('Address is required'),
+  body('location').isObject().withMessage('Location is required'),
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
+    }
+
+    const { name, googlePlaceId, address, location, types } = req.body;
+
+    // Check if venue already exists with this Google Place ID
+    const existingVenue = await Venue.findOne({ googlePlaceId });
+    if (existingVenue) {
+      return res.status(200).json({
+        success: true,
+        data: existingVenue,
+        message: 'Venue already exists'
+      });
+    }
+
+    // Create new venue from Google Places data
+    const venue = await Venue.create({
+      name,
+      googlePlaceId,
+      address,
+      location,
+      description: `Venue imported from Google Places`,
+      contactInfo: {
+        phone: 'Not provided',
+        email: 'Not provided'
+      },
+      facilities: ['parking', 'lighting'], // Default facilities
+      courts: [{
+        number: 1,
+        type: 'indoor',
+        surface: 'synthetic',
+        isActive: true
+      }],
+      pricing: {
+        hourlyRate: 500, // Default pricing
+        currency: 'INR'
+      },
+      isActive: true,
+      createdBy: req.user.id
+    });
+
+    await venue.populate('createdBy', 'name');
+
+    res.status(201).json({
+      success: true,
+      data: venue
+    });
+  } catch (error) {
+    console.error('Create venue from Google Places error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while creating venue'
+    });
+  }
+});
+
 // @desc    Create venue (Admin only)
 // @route   POST /api/venues
 // @access  Private (Admin only)

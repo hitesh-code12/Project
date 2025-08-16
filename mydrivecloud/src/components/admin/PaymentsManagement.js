@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useAuth } from '../../contexts/AuthContext';
 import { DollarSign, Upload, Plus, Calendar, MapPin, Receipt, Trash2, Edit, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
+import GooglePlacesSearch from '../common/GooglePlacesSearch';
 
 const PaymentsManagement = () => {
   const { apiCall } = useAuth();
@@ -13,6 +14,7 @@ const PaymentsManagement = () => {
   const [editingExpense, setEditingExpense] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedVenue, setSelectedVenue] = useState(null);
 
   const {
     register,
@@ -58,6 +60,28 @@ const PaymentsManagement = () => {
     }
   };
 
+  const handleVenueSelect = (venue) => {
+    setSelectedVenue(venue);
+  };
+
+  const handleVenueCreate = async (venueData) => {
+    try {
+      const response = await apiCall('/venues/google-places', {
+        method: 'POST',
+        body: JSON.stringify(venueData),
+      });
+      
+      if (response.success) {
+        setSelectedVenue(response.data);
+        toast.success('Venue created successfully!');
+        fetchVenues(); // Refresh venues list
+      }
+    } catch (error) {
+      console.error('Error creating venue:', error);
+      toast.error('Failed to create venue');
+    }
+  };
+
   const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
@@ -84,9 +108,14 @@ const PaymentsManagement = () => {
         imageUrl = await uploadImage(selectedFile);
       }
 
+      if (!selectedVenue) {
+        toast.error('Please select a venue');
+        return;
+      }
+
       const expenseData = {
         date: data.date,
-        venue: data.venue,
+        venue: selectedVenue._id,
         amount: parseFloat(data.amount),
         description: data.description,
         category: data.category,
@@ -113,6 +142,7 @@ const PaymentsManagement = () => {
       setShowAddForm(false);
       setEditingExpense(null);
       setSelectedFile(null);
+      setSelectedVenue(null);
       fetchExpenses();
     } catch (error) {
       console.error('Error saving expense:', error);
@@ -153,6 +183,7 @@ const PaymentsManagement = () => {
     setShowAddForm(false);
     setEditingExpense(null);
     setSelectedFile(null);
+    setSelectedVenue(null);
     reset();
   };
 
@@ -253,19 +284,15 @@ const PaymentsManagement = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Venue
                 </label>
-                <select
-                  {...register('venue', { required: 'Venue is required' })}
-                  className="input-field"
-                >
-                  <option value="">Select a venue</option>
-                  {venues.map((venue) => (
-                    <option key={venue._id} value={venue._id}>
-                      {venue.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.venue && (
-                  <p className="text-sm text-red-600 mt-1">{errors.venue.message}</p>
+                <GooglePlacesSearch
+                  onVenueSelect={handleVenueSelect}
+                  onVenueCreate={handleVenueCreate}
+                  existingVenues={venues}
+                />
+                {selectedVenue && (
+                  <p className="text-sm text-green-600 mt-1">
+                    Selected: {selectedVenue.name}
+                  </p>
                 )}
               </div>
               <div>

@@ -7,6 +7,12 @@ const venueSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Venue name cannot be more than 100 characters']
   },
+  googlePlaceId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    index: true
+  },
   description: {
     type: String,
     maxlength: [500, 'Description cannot be more than 500 characters']
