@@ -55,7 +55,7 @@ const ConnectionTest = () => {
     setLoading(true);
     try {
       const startTime = Date.now();
-      const response = await fetch('https://project-production-3188.up.railway.app/api/test', {
+      const response = await fetch('https://badminton-booking-backend.onrender.com/api/test', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ const ConnectionTest = () => {
     setLoading(true);
     try {
       const startTime = Date.now();
-      const response = await fetch('https://project-production-3188.up.railway.app/health', {
+      const response = await fetch('https://badminton-booking-backend.onrender.com/health', {
         method: 'GET',
       });
       const endTime = Date.now();
@@ -118,7 +118,7 @@ const ConnectionTest = () => {
     setLoading(true);
     try {
       const startTime = Date.now();
-      const response = await fetch('https://project-production-3188.up.railway.app/api/network-test', {
+      const response = await fetch('https://badminton-booking-backend.onrender.com/api/network-test', {
         method: 'GET',
       });
       const endTime = Date.now();
@@ -151,23 +151,23 @@ const ConnectionTest = () => {
     const tests = [
       {
         name: 'DNS Resolution Test',
-        url: 'https://project-production-3188.up.railway.app',
-        description: 'Test if Railway domain resolves'
+        url: 'https://badminton-booking-backend.onrender.com',
+        description: 'Test if Render domain resolves'
       },
       {
         name: 'HTTPS Connection Test',
-        url: 'https://project-production-3188.up.railway.app/health',
-        description: 'Test HTTPS connection to Railway'
+        url: 'https://badminton-booking-backend.onrender.com/health',
+        description: 'Test HTTPS connection to Render'
       },
       {
         name: 'API Endpoint Test',
-        url: 'https://project-production-3188.up.railway.app/api/test',
+        url: 'https://badminton-booking-backend.onrender.com/api/test',
         description: 'Test API endpoint accessibility'
       },
       {
-        name: 'Alternative Railway URL',
-        url: 'https://railway.app',
-        description: 'Test if Railway main site is accessible'
+        name: 'Alternative Render URL',
+        url: 'https://render.com',
+        description: 'Test if Render main site is accessible'
       }
     ];
 
@@ -345,7 +345,7 @@ const ConnectionTest = () => {
         <h4 className="font-medium text-yellow-800 mb-2">Mobile Network Troubleshooting</h4>
         <ul className="text-sm text-yellow-700 space-y-1">
           <li>• <strong>DNS Issues:</strong> Try switching to mobile data or different WiFi</li>
-          <li>• <strong>ISP Blocking:</strong> Some ISPs block Railway domains</li>
+                          <li>• <strong>ISP Blocking:</strong> Some ISPs block Render domains (less common than Railway)</li>
           <li>• <strong>Corporate Firewall:</strong> Work networks often block external APIs</li>
           <li>• <strong>Mobile Carrier:</strong> Some carriers restrict certain domains</li>
           <li>• <strong>VPN Solution:</strong> Try using a VPN to bypass restrictions</li>

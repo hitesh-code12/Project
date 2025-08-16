@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 // Backend API configuration
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://project-production-3188.up.railway.app/api'
+  ? 'https://badminton-booking-backend.onrender.com/api'
   : 'http://localhost:5001/api';
 
 export const useAuth = () => {
