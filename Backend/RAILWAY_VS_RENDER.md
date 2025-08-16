@@ -123,3 +123,71 @@ curl https://your-app-name.onrender.com/health
 - **Render Documentation**: https://render.com/docs
 - **Render Community**: https://community.render.com
 - **Migration Help**: Check the `RENDER_SETUP.md` file 
+
+##  **Immediate Action Required:**
+
+The 502 error is most likely due to **missing environment variables** in your Render Dashboard. Here's what you need to do:
+
+### **Step 1: Set Environment Variables in Render Dashboard**
+
+1. Go to [render.com](https://render.com) and log in
+2. Click on your service `badminton-booking-backend`
+3. Go to the **"Environment"** tab
+4. Add these **required** environment variables:
+
+```
+NODE_ENV=production
+PORT=10000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_super_secret_jwt_key
+```
+
+### **Step 2: Get Your MongoDB Connection String**
+
+If you don't have your MongoDB connection string:
+1. Go to [MongoDB Atlas](https://cloud.mongodb.com)
+2. Click on your cluster
+3. Click "Connect"
+4. Choose "Connect your application"
+5. Copy the connection string
+6. Replace `<password>` with your actual password
+
+### **Step 3: Generate a JWT Secret**
+
+Run this command to generate a secure JWT secret:
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+### **Step 4: Redeploy**
+
+After setting the environment variables:
+1. Go back to your Render service
+2. Click **"Manual Deploy"** → **"Deploy latest commit"**
+3. Wait 2-3 minutes for deployment to complete
+
+### **Step 5: Test**
+
+Once deployed, test these endpoints:
+```bash
+# Health check
+curl https://badminton-booking-backend.onrender.com/health
+
+# Debug info
+curl https://badminton-booking-backend.onrender.com/api/debug
+```
+
+## 📋 **What I've Done to Help:**
+
+1. **Updated `render.yaml`** with better configuration
+2. **Created troubleshooting guide** (`Backend/RENDER_TROUBLESHOOTING.md`)
+3. **Added debug endpoint** (`/api/debug`) to help diagnose issues
+4. **Updated verification script** to check the setup
+
+## 🚨 **Most Likely Cause:**
+
+The 502 error is almost certainly because **MONGODB_URI** and **JWT_SECRET** environment variables are not set in your Render Dashboard. Your application is trying to connect to MongoDB and validate JWT tokens, but can't find the required configuration.
+
+Once you set these environment variables and redeploy, your backend should work perfectly and resolve the mobile network issues you had with Railway!
+
+Let me know once you've set the environment variables and I can help you test the deployment. 

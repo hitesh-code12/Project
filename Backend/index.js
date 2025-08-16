@@ -17,6 +17,7 @@ const adminRoutes = require('./routes/admin');
 const availabilityRoutes = require('./routes/availability');
 const leagueRoutes = require('./routes/leagues');
 const uploadRoutes = require('./routes/upload');
+const expenseRoutes = require('./routes/expenses');
 
 // Import middleware
 const { errorHandler } = require('./middleware/errorHandler');
@@ -166,6 +167,21 @@ app.get('/api/mobile-health', (req, res) => {
   });
 });
 
+// Debug endpoint for troubleshooting
+app.get('/api/debug', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Debug information',
+    timestamp: new Date().toISOString(),
+    nodeEnv: process.env.NODE_ENV,
+    port: process.env.PORT,
+    mongoUri: process.env.MONGODB_URI ? 'Set' : 'Not set',
+    jwtSecret: process.env.JWT_SECRET ? 'Set' : 'Not set',
+    platform: process.env.RENDER_EXTERNAL_URL ? 'Render' : (process.env.RAILWAY_STATIC_URL ? 'Railway' : 'Other'),
+    renderUrl: process.env.RENDER_EXTERNAL_URL || 'Not set'
+  });
+});
+
 // Serve static files from uploads directory
 app.use('/uploads', express.static('uploads'));
 
@@ -175,6 +191,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/venues', venueRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/payments', expenseRoutes); // Expense routes (admin only)
 app.use('/api/admin', adminRoutes);
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/leagues', leagueRoutes);

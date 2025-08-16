@@ -58,7 +58,7 @@ const PlayersManagement = () => {
             email: data.email,
             phone: data.phone,
             role: 'player',
-            password: 'defaultPassword123', // You might want to generate a random password
+            password: data.password,
           }),
         });
         toast.success('Player added successfully!');
@@ -81,6 +81,7 @@ const PlayersManagement = () => {
       name: player.name,
       email: player.email,
       phone: player.phone || '',
+      password: '',
     });
   };
 
@@ -179,16 +180,38 @@ const PlayersManagement = () => {
                 )}
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                {...register('phone')}
-                className="input-field"
-                placeholder="Enter phone number (optional)"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  {...register('phone')}
+                  className="input-field"
+                  placeholder="Enter phone number (optional)"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  {...register('password', { 
+                    required: !editingPlayer ? 'Password is required' : false,
+                    minLength: {
+                      value: 6,
+                      message: 'Password must be at least 6 characters'
+                    }
+                  })}
+                  className="input-field"
+                  placeholder={editingPlayer ? "Leave blank to keep current" : "Enter password"}
+                />
+                {errors.password && (
+                  <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
+                )}
+              </div>
             </div>
             <div className="flex space-x-3">
               <button type="submit" className="btn-primary">

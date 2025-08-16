@@ -23,14 +23,22 @@ export const AuthProvider = ({ children }) => {
   // Helper function to make API calls
   const apiCall = async (endpoint, options = {}) => {
     const token = localStorage.getItem('token');
+    
+    // Handle FormData differently (for file uploads)
+    const isFormData = options.body instanceof FormData;
+    
     const config = {
       headers: {
-        'Content-Type': 'application/json',
         ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
     };
+
+    // Only set Content-Type for JSON, let browser set it for FormData
+    if (!isFormData) {
+      config.headers['Content-Type'] = 'application/json';
+    }
 
     try {
       console.log('Making API call to:', `${API_BASE_URL}${endpoint}`);

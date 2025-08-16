@@ -6,10 +6,14 @@ services:
     rootDir: Backend
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    # Add these for better reliability
+    buildFilter:
+      paths:
+        - Backend/**
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
-    healthCheckPath: /health
-    autoDeploy: true 
+        value: 10000 
