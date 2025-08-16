@@ -27,7 +27,7 @@ const { scheduleWeeklyNotification } = require('./utils/weeklyNotification');
 
 const app = express();
 
-// Trust proxy for Railway deployment (fixes rate-limit X-Forwarded-For error)
+// Trust proxy for deployment (fixes rate-limit X-Forwarded-For error)
 app.set('trust proxy', 1);
 
 // Security middleware
@@ -91,7 +91,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('combined'));
 }
 
-// Health check endpoint (Railway requires this)
+// Health check endpoint (required for deployment platforms)
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
@@ -100,8 +100,8 @@ app.get('/health', (req, res) => {
     environment: process.env.NODE_ENV,
     mongodbConfigured: !!(process.env.MONGODB_URI || process.env.MONGODB_URI_PROD || process.env.MONGODB_URL || process.env.DATABASE_URL),
     port: process.env.PORT,
-    railwayUrl: process.env.RAILWAY_STATIC_URL,
-    publicDomain: process.env.RAILWAY_PUBLIC_DOMAIN
+    platform: process.env.RENDER_EXTERNAL_URL ? 'Render' : (process.env.RAILWAY_STATIC_URL ? 'Railway' : 'Other'),
+    url: process.env.RENDER_EXTERNAL_URL || process.env.RAILWAY_STATIC_URL || 'Not set'
   });
 });
 
@@ -161,7 +161,7 @@ app.get('/api/mobile-health', (req, res) => {
     success: true,
     message: 'Mobile network health check',
     timestamp: new Date().toISOString(),
-    server: 'railway',
+    platform: process.env.RENDER_EXTERNAL_URL ? 'Render' : (process.env.RAILWAY_STATIC_URL ? 'Railway' : 'Other'),
     environment: process.env.NODE_ENV
   });
 });
@@ -203,7 +203,7 @@ const connectDB = async () => {
     if (!mongoUri) {
       console.error('❌ No MongoDB URI found in environment variables');
       console.error('Available environment variables:', Object.keys(process.env));
-      throw new Error('MongoDB URI not found in environment variables. Please check Railway environment variables.');
+      throw new Error('MongoDB URI not found in environment variables. Please check your deployment platform environment variables.');
     }
     
     console.log('✅ MongoDB URI found, attempting connection...');
@@ -211,7 +211,7 @@ const connectDB = async () => {
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('❌ Database connection error:', error);
-    console.error('Please check your Railway environment variables and MongoDB connection string.');
+    console.error('Please check your deployment platform environment variables and MongoDB connection string.');
     process.exit(1);
   }
 };
@@ -224,12 +224,12 @@ const startServer = async () => {
     console.log('🚀 Starting server...');
     console.log(`📊 Environment: ${process.env.NODE_ENV}`);
     console.log(`🔌 Port: ${PORT}`);
-    console.log(`🌐 Railway URL: ${process.env.RAILWAY_STATIC_URL || 'Not set'}`);
-    console.log(`🔗 Public URL: ${process.env.RAILWAY_PUBLIC_DOMAIN || 'Not set'}`);
+    console.log(`🌐 Platform URL: ${process.env.RENDER_EXTERNAL_URL || process.env.RAILWAY_STATIC_URL || 'Not set'}`);
+    console.log(`🔗 Public Domain: ${process.env.RAILWAY_PUBLIC_DOMAIN || 'Not set'}`);
     
     await connectDB();
     
-    // Listen on all interfaces for Railway
+    // Listen on all interfaces for deployment
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`✅ Server running on port ${PORT}`);
       console.log(`🌍 Listening on all interfaces (0.0.0.0:${PORT})`);
