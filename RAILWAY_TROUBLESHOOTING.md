@@ -172,3 +172,67 @@ If you're still seeing the error after following these steps:
 ---
 
 **The key is making sure `MONGODB_URI` is properly set in Railway's environment variables!** 
+
+---
+
+You're now getting a CORS error after fixing the working directory—this is progress!  
+This means your backend is running, but the CORS configuration is not allowing requests from your GitHub Pages frontend.
+
+---
+
+## 🔧 **How to Fix the CORS Error**
+
+### 1. **Update CORS Configuration in Backend**
+
+Open `Backend/index.js` and update the CORS middleware to allow both your GitHub Pages domain and local development:
+
+```js
+const allowedOrigins = [
+  'https://hitesh-code12.github.io',
+  'http://localhost:3000'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+```
+
+This will allow requests from both your GitHub Pages and local dev environments.
+
+---
+
+### 2. **Commit, Push, and Redeploy**
+
+1. **Commit the change:**
+   ```bash
+   git add Backend/index.js
+   git commit -m "Fix CORS: allow GitHub Pages and localhost"
+   git push origin main
+   ```
+2. **Wait for Railway to redeploy.**
+
+---
+
+### 3. **Test Again**
+
+After redeployment, try your curl command and the frontend again.
+
+---
+
+## **Why This Works**
+
+- The previous CORS config only allowed requests with an exact match to the allowed origins array.
+- Some CORS libraries require a function for dynamic origin checking, especially when using multiple domains.
+
+---
+
+**Let me know once you've made this change and redeployed, or if you want me to make the code edit for you!** 

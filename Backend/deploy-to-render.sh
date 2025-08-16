@@ -31,9 +31,9 @@ if [ ! -f "package.json" ]; then
     exit 1
 fi
 
-# Check if render.yaml exists
-if [ ! -f "render.yaml" ]; then
-    echo "❌ render.yaml not found. Please ensure the file exists."
+# Check if render.yaml exists in root directory
+if [ ! -f "../render.yaml" ]; then
+    echo "❌ render.yaml not found in root directory. Please ensure the file exists."
     exit 1
 fi
 

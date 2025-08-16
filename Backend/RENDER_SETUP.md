@@ -19,6 +19,18 @@ This guide will help you deploy your Badminton Booking Backend on Render, which 
    git push origin main
    ```
 
+2. **Verify file structure**
+   ```
+   Project/
+   ├── render.yaml          # Render configuration (root level)
+   ├── Backend/             # Backend code
+   │   ├── package.json
+   │   ├── index.js
+   │   └── ...
+   └── mydrivecloud/        # Frontend code
+       └── ...
+   ```
+
 2. **Verify your package.json has the correct start script**
    ```json
    {
@@ -34,7 +46,7 @@ This guide will help you deploy your Badminton Booking Backend on Render, which 
 1. Go to [render.com](https://render.com) and sign up/login
 2. Click "New +" → "Blueprint"
 3. Connect your GitHub repository
-4. Render will automatically detect the `render.yaml` file
+4. Render will automatically detect the `render.yaml` file in the root directory
 5. Click "Apply" to deploy
 
 ### Option B: Manual Setup
